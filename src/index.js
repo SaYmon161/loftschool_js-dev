@@ -99,15 +99,15 @@ function returnArgumentsArray() {
 
    console.log(newSum()) выведет 6
  */
-function bindFunction(fn) {
-    let argArray = [];
+function bindFunction(fn, ...args) {
+    // let argArray = [];
 
-    for (let i = 1; i < arguments.length; i++) {
-        argArray.push(arguments[i]);
-    }
+    // for (let i = 1; i < arguments.length; i++) {
+    //     argArray.push(arguments[i]);
+    // }
 
     return () => {
-        return fn.apply(null, argArray);
+        return fn.apply(null, args);
     };
 }
 
