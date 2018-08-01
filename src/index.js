@@ -85,16 +85,12 @@ function slice(array, from = 0, to = array.length) {
 
     if (to < 0) {
         end = array.length + to;
-    } else if (to > 0 && to <= array.length) {
-        end = to;
     } else if (to > array.length) {
         end = array.length;
     }
 
     if (from < 0) {
         start = array.length + from;
-    } else {
-        start = from;
     }
 
     for (let i = 0; i <= end - 1; i++) {
