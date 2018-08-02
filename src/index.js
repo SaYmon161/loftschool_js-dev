@@ -17,6 +17,19 @@
    isAllTrue([100, 2, 3, 4, 5], n => n < 10) // вернет false
  */
 function isAllTrue(array, fn) {
+    if (array.length === 0 || !(array instanceof Array)) {
+        throw new Error('empty array');
+    } else if (!(fn instanceof Function)) {
+        throw new Error('fn is not a function');
+    } else {
+        for (let item of array) {
+            if (fn(item) === false) {
+                return false;
+            }
+        }
+    }
+
+    return true;
 }
 
 /*
@@ -36,6 +49,19 @@ function isAllTrue(array, fn) {
    isSomeTrue([1, 2, 3, 4, 5], n => n > 20) // вернет false
  */
 function isSomeTrue(array, fn) {
+    if (array.length === 0 || !(array instanceof Array)) {
+        throw new Error('empty array');
+    }
+    if (!(fn instanceof Function)) {
+        throw new Error('fn is not a function');
+    }
+    for (let item of array) {
+        if (fn(item) === true) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 /*
@@ -49,7 +75,22 @@ function isSomeTrue(array, fn) {
  3.3: Необходимо выбрасывать исключение в случаях:
    - fn не является функцией (с текстом "fn is not a function")
  */
-function returnBadArguments(fn) {
+function returnBadArguments(fn, ...args) {
+    let resArray = [];
+
+    if (!(fn instanceof Function)) {
+        throw new Error('fn is not a function');
+    }
+
+    for (let item of args) {
+        try {
+            fn(item);
+        } catch (e) {
+            resArray.push(item);
+        }
+    }
+
+    return resArray;
 }
 
 /*
@@ -69,14 +110,54 @@ function returnBadArguments(fn) {
    - number не является числом (с текстом "number is not a number")
    - какой-либо из аргументов div является нулем (с текстом "division by 0")
  */
-function calculator() {
+function calculator(number = 0) {
+    if (!isFinite(number)) {
+        throw new Error('number is not a number');
+    }
+
+    return {
+        sum: function(...args) {
+            let result = number;
+
+            for (const item of args) {
+                result = result + item;
+            }
+
+            return result;
+        },
+        dif: function(...args) {
+            let result = number;
+
+            for (const item of args) {
+                result = result - item;
+            }
+
+            return result;
+        },
+        div: function(...args) {
+            let result = number;
+
+            for (const item of args) {
+                if (item === 0) {
+                    throw new Error('division by 0');
+                }
+                result = result / item;
+            }
+
+            return result;
+        },
+        mul: function(...args) {
+            let result = number;
+
+            for (const item of args) {
+                result = result * item;
+            }
+
+            return result;
+        }
+    };
 }
 
 /* При решении задач, пострайтесь использовать отладчик */
 
-export {
-    isAllTrue,
-    isSomeTrue,
-    returnBadArguments,
-    calculator
-};
+export { isAllTrue, isSomeTrue, returnBadArguments, calculator };
