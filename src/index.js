@@ -254,7 +254,7 @@ function observeChildNodes(where, fn) {
 
     var config = { attributes: true, childList: true, characterData: true };
 
-    observer.observe(root, config);
+    observer.observe(where, config);
 }
 
 export {
