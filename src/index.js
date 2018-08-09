@@ -11,6 +11,11 @@
    createDivWithText('loftschool') // создаст элемент div, поместит в него 'loftschool' и вернет созданный элемент
  */
 function createDivWithText(text) {
+    const element = document.createElement('div');
+
+    element.innerText = text;
+
+    return element;
 }
 
 /*
@@ -22,6 +27,9 @@ function createDivWithText(text) {
    prepend(document.querySelector('#one'), document.querySelector('#two')) // добавит элемент переданный первым аргументом в начало элемента переданного вторым аргументом
  */
 function prepend(what, where) {
+    const firstChild = where.children[0];
+
+    where.insertBefore(what, firstChild);
 }
 
 /*
@@ -44,6 +52,16 @@ function prepend(what, where) {
    findAllPSiblings(document.body) // функция должна вернуть массив с элементами div и span т.к. следующим соседом этих элементов является элемент с тегом P
  */
 function findAllPSiblings(where) {
+    const children = where.children;
+    let childrenArray = [];
+
+    for (let item of children) {
+        if (item.nextElementSibling && item.nextElementSibling.tagName === 'P') {
+            childrenArray.push(item);
+        }
+    }
+
+    return childrenArray;
 }
 
 /*
@@ -66,7 +84,7 @@ function findAllPSiblings(where) {
 function findError(where) {
     var result = [];
 
-    for (var child of where.childNodes) {
+    for (var child of where.children) {
         result.push(child.innerText);
     }
 
@@ -86,6 +104,14 @@ function findError(where) {
    должно быть преобразовано в <div></div><p></p>
  */
 function deleteTextNodes(where) {
+    let childNodes = where.childNodes;
+
+    for (let i = 0; i < childNodes.length; i++) {
+        if (childNodes[i].nodeType === 3) {
+            where.removeChild(childNodes[i]);
+            i--;
+        }
+    }
 }
 
 /*
@@ -101,6 +127,16 @@ function deleteTextNodes(where) {
    должно быть преобразовано в <span><div><b></b></div><p></p></span>
  */
 function deleteTextNodesRecursive(where) {
+    let childNodes = where.childNodes;
+
+    for (let i = 0; i < childNodes.length; i++) {
+        if (childNodes[i].nodeType === 3) {
+            where.removeChild(childNodes[i]);
+            i--;
+        } else if (childNodes[i].childNodes.length != 0) {
+            deleteTextNodesRecursive(childNodes[i]);
+        }
+    }
 }
 
 /*
@@ -124,6 +160,45 @@ function deleteTextNodesRecursive(where) {
    }
  */
 function collectDOMStat(root) {
+    let statObj = {
+        tags: {},
+        classes: {},
+        texts: 0
+    };
+
+    (function readDOM(where) {
+        let childNodes = where.childNodes;
+
+        for (let i = 0; i < childNodes.length; i++) {
+            if (childNodes[i].nodeType === 3) {
+                statObj.texts++;
+            } else if (childNodes[i].nodeType === 1) {
+                if (statObj.tags.hasOwnProperty(childNodes[i].nodeName)) {
+                    statObj.tags[childNodes[i].nodeName]++;
+                } else {
+                    statObj.tags[childNodes[i].nodeName] = 1;
+                }
+
+                let classList = childNodes[i].classList;
+
+                if (classList != '') {
+                    for (let i = 0; i < classList.length; i++) {
+                        if (statObj.classes.hasOwnProperty(classList[i])) {
+                            statObj.classes[classList[i]]++;
+                        } else {
+                            statObj.classes[classList[i]] = 1;
+                        }
+                    }
+                }
+            }
+
+            if (childNodes[i].childNodes.length != 0) {
+                readDOM(childNodes[i]);
+            }
+        }
+    })(root);
+
+    return statObj;
 }
 
 /*
@@ -159,6 +234,27 @@ function collectDOMStat(root) {
    }
  */
 function observeChildNodes(where, fn) {
+    let observer = new MutationObserver(function(mutations) {
+        let obj = {
+            type: '',
+            nodes: []
+        };
+
+        mutations.forEach(function(mutation) {
+            if (mutation.addedNodes.length > 0) {
+                obj.type = 'insert';
+                obj.nodes.push(...mutation.addedNodes);
+            } else if (mutation.removedNodes.length > 0) {
+                obj.type = 'remove';
+                obj.nodes.push(...mutation.removedNodes);
+            }
+        });
+        fn(obj);
+    });
+
+    var config = { attributes: true, childList: true, characterData: true };
+
+    observer.observe(root, config);
 }
 
 export {
