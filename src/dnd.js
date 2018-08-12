@@ -53,7 +53,7 @@ function createDiv() {
 function addListeners(target) {
     target.addEventListener('dragstart', e => {
         let targetDiv;
-        let id = 'id' + Math.round(Math.random() * 100);
+        let id = 'id' + Math.round(Math.random() * 1000);
 
         if (e.target.classList.contains('draggable-div')) {
             targetDiv = e.target;
