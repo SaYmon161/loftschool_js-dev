@@ -34,8 +34,8 @@ function createDiv() {
     newDiv.style.background = `rgb(${Math.random() * 255}, ${Math.random() *
     255}, ${Math.random() * 255})`;
     newDiv.style.position = 'absolute';
-    newDiv.style.top = `${Math.random() * window.innerHeight}px`;
-    newDiv.style.left = `${Math.random() * window.innerWidth}px`;
+    newDiv.style.top = `${Math.random() * (window.innerHeight - 500)}px`;
+    newDiv.style.left = `${Math.random() * (window.innerWidth - 500)}px`;
     newDiv.classList.add('draggable-div');
     newDiv.setAttribute('draggable', 'true');
 
@@ -53,7 +53,7 @@ function createDiv() {
 function addListeners(target) {
     target.addEventListener('dragstart', e => {
         let targetDiv;
-        let id = 'id' + Math.round(Math.random() * 1000);
+        // let id = 'id' + Math.round(Math.random() * 1000);
 
         if (e.target.classList.contains('draggable-div')) {
             targetDiv = e.target;
@@ -61,27 +61,27 @@ function addListeners(target) {
             return;
         }
 
-        targetDiv.id = id;
+        targetDiv.setAttribute('dragged', '');
         targetDiv.style.zIndex = '100';
         let shiftX = e.clientX - targetDiv.getBoundingClientRect().left;
         let shiftY = e.clientY - targetDiv.getBoundingClientRect().top;
 
         e.dataTransfer.setData('shiftX', `${shiftX}`);
         e.dataTransfer.setData('shiftY', `${shiftY}`);
-
-        e.dataTransfer.setData('id', id);
     });
     document.addEventListener('dragover', e => {
         e.preventDefault();
     });
     document.addEventListener('drop', e => {
-        let targetDiv = document.getElementById(e.dataTransfer.getData('id'));
+        let targetDiv = document.querySelector('[dragged]');
 
         targetDiv.style.top = `${e.clientY - e.dataTransfer.getData('shiftY')}px`;
 
         targetDiv.style.left = `${e.clientX - e.dataTransfer.getData('shiftX')}px`;
 
         targetDiv.style.zIndex = 'auto';
+
+        targetDiv.removeAttribute('dragged');
     });
 }
 
