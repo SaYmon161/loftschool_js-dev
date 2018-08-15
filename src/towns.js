@@ -50,12 +50,18 @@ function loadTowns() {
             if (xhr.readyState === 4) {
                 if (xhr.status === 200) {
                     filterInput.style.display = 'block';
-                    let jsonOptions = JSON.parse(xhr.responseText);
+                    let townsArray = JSON.parse(xhr.responseText);
 
-                    jsonOptions.forEach(item => {
-                        townsArray.push(item.name);
+                    // jsonOptions.forEach(item => {
+                    //     townsArray.push(item.name);
+                    // });
+                    townsArray.sort((a, b) => {
+                        if (a.name > b.name) {
+                            return 1;
+                        }
+
+                        return -1;
                     });
-                    townsArray.sort();
 
                     resolve(townsArray);
                 } else {
@@ -109,7 +115,6 @@ const filterBlock = homeworkContainer.querySelector('#filter-block');
 const filterInput = homeworkContainer.querySelector('#filter-input');
 /* Блок с результатами поиска */
 const filterResult = homeworkContainer.querySelector('#filter-result');
-const townsList = document.createElement('ul');
 const errorMessage = document.createElement('div');
 const errorButton = document.createElement('button');
 
@@ -122,22 +127,21 @@ errorButton.textContent = 'Повторить';
 filterBlock.appendChild(errorMessage);
 filterBlock.appendChild(errorButton);
 
-filterResult.appendChild(townsList);
-
 loadTowns().then(result => {
     filterInput.addEventListener('keyup', function() {
         if (filterInput.value === '') {
-            townsList.innerHTML = '';
+            filterResult.innerHTML = '';
         }
-        townsList.innerHTML = '';
         let subStr = filterInput.value;
 
         for (let item of result) {
-            if (isMatching(item, subStr) && subStr) {
-                const townsItem = document.createElement('li');
+            let town = item.name;
 
-                townsItem.textContent = item;
-                townsList.appendChild(townsItem);
+            if (isMatching(town, subStr) && subStr) {
+                const townsItem = document.createElement('div');
+
+                townsItem.textContent = town;
+                filterResult.appendChild(townsItem);
             }
         }
 
