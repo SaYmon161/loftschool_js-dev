@@ -36,55 +36,42 @@ const homeworkContainer = document.querySelector('#homework-container');
  Массив городов пожно получить отправив асинхронный запрос по адресу
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
-function loadTowns() {
-    return new Promise((resolve, reject) => {
-        let xhr = new XMLHttpRequest();
-        let townsArray = [];
+import loadAndSortTowns from './index';
+console.log(loadAndSortTowns());
 
-        xhr.onloadend = function() {
-            loadingBlock.style.display = 'none';
-            filterBlock.style.display = 'block';
-        };
+// function loadTowns() {
+//     return new Promise((resolve, reject) => {
+//         let xhr = new XMLHttpRequest();
 
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                    filterInput.style.display = 'block';
-                    let townsArray = JSON.parse(xhr.responseText);
+//         xhr.onreadystatechange = function() {
+//             if (xhr.readyState === 4) {
+//                 if (xhr.status === 200) {
+//                     let townsArray = JSON.parse(xhr.responseText);
 
-                    // jsonOptions.forEach(item => {
-                    //     townsArray.push(item.name);
-                    // });
-                    townsArray.sort((a, b) => {
-                        if (a.name > b.name) {
-                            return 1;
-                        }
+//                     townsArray.sort((a, b) => {
+//                         if (a.name > b.name) {
+//                             return 1;
+//                         }
 
-                        return -1;
-                    });
+//                         return -1;
+//                     });
 
-                    resolve(townsArray);
-                } else {
-                    filterInput.style.display = 'none';
-                    errorMessage.style.display = 'block';
-                    errorButton.style.display = 'block';
-                    errorButton.addEventListener('click', e => {
-                        e.preventDefault();
-                        loadTowns();
-                    });
-                }
-            }
-        };
+//                     resolve(townsArray);
+//                 } else {
+//                     reject('Не удалось загрузить города');
+//                 }
+//             }
+//         };
 
-        xhr.open(
-            'GET',
-            'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json',
-            true
-        );
+//         xhr.open(
+//             'GET',
+//             'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json',
+//             true
+//         );
 
-        xhr.send();
-    });
-}
+//         xhr.send();
+//     });
+// }
 
 /*
  Функция должна проверять встречается ли подстрока chunk в строке full
@@ -121,32 +108,49 @@ const errorButton = document.createElement('button');
 errorMessage.style.display = 'none';
 errorButton.style.display = 'none';
 
-errorMessage.textContent = 'Не удалось загрузить города';
 errorButton.textContent = 'Повторить';
 
 filterBlock.appendChild(errorMessage);
 filterBlock.appendChild(errorButton);
 
-loadTowns().then(result => {
-    filterInput.addEventListener('keyup', function() {
-        if (filterInput.value === '') {
-            filterResult.innerHTML = '';
-        }
-        let subStr = filterInput.value;
-
-        for (let item of result) {
-            let town = item.name;
-
-            if (isMatching(town, subStr) && subStr) {
-                const townsItem = document.createElement('div');
-
-                townsItem.textContent = town;
-                filterResult.appendChild(townsItem);
-            }
-        }
-
-    // это обработчик нажатия кливиш в текстовом поле
-    });
+loadAndSortTowns().then(() => {
+    loadingBlock.style.display = 'none';
+    filterBlock.style.display = 'block';
 });
+loadAndSortTowns().then(
+    result => {
+        filterInput.addEventListener('keyup', function() {
+            if (filterInput.value === '') {
+                filterResult.innerHTML = '';
+            }
+            filterResult.innerHTML = '';
+
+            let subStr = filterInput.value;
+
+            for (let item of result) {
+                let town = item.name;
+
+                if (isMatching(town, subStr) && subStr) {
+                    const townsItem = document.createElement('div');
+
+                    townsItem.textContent = town;
+                    filterResult.appendChild(townsItem);
+                }
+            }
+
+            // это обработчик нажатия кливиш в текстовом поле
+        });
+    },
+    error => {
+        errorMessage.textContent = error;
+        filterInput.style.display = 'none';
+        errorMessage.style.display = 'block';
+        errorButton.style.display = 'block';
+        errorButton.addEventListener('click', e => {
+            e.preventDefault();
+            loadAndSortTowns();
+        });
+    }
+);
 
 export { loadTowns, isMatching };

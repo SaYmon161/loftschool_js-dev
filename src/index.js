@@ -37,33 +37,34 @@ function delayPromise(seconds) {
 function loadAndSortTowns() {
     return new Promise((resolve, reject) => {
         let xhr = new XMLHttpRequest();
-        let towns = [];
-        let townsArray = [];
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    let townsArray = JSON.parse(xhr.responseText);
+
+                    townsArray.sort((a, b) => {
+                        if (a.name > b.name) {
+                            return 1;
+                        }
+
+                        return -1;
+                    });
+
+                    resolve(townsArray);
+                } else {
+                    reject('Не удалось загрузить города');
+                }
+            }
+        };
 
         xhr.open(
             'GET',
             'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json',
             true
         );
+
         xhr.send();
-
-        towns = xhr.responseText;
-
-        for (let item of towns) {
-            for (let key in item) {
-                if (key) {
-                    townsArray.push(item[key]);
-                }
-            }
-        }
-
-        townsArray.sort();
-
-        if (xhr.status != 200) {
-            reject();
-        } else {
-            resolve(townsArray);
-        }
     });
 }
 
