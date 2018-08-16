@@ -36,8 +36,7 @@ const homeworkContainer = document.querySelector('#homework-container');
  Массив городов пожно получить отправив асинхронный запрос по адресу
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
-import loadAndSortTowns from './index';
-console.log(loadAndSortTowns());
+import { loadAndSortTowns as loadTowns } from './index';
 
 // function loadTowns() {
 //     return new Promise((resolve, reject) => {
@@ -113,11 +112,11 @@ errorButton.textContent = 'Повторить';
 filterBlock.appendChild(errorMessage);
 filterBlock.appendChild(errorButton);
 
-loadAndSortTowns().then(() => {
+loadTowns().then(() => {
     loadingBlock.style.display = 'none';
     filterBlock.style.display = 'block';
 });
-loadAndSortTowns().then(
+loadTowns().then(
     result => {
         filterInput.addEventListener('keyup', function() {
             if (filterInput.value === '') {
@@ -148,7 +147,7 @@ loadAndSortTowns().then(
         errorButton.style.display = 'block';
         errorButton.addEventListener('click', e => {
             e.preventDefault();
-            loadAndSortTowns();
+            loadTowns();
         });
     }
 );
