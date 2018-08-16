@@ -38,40 +38,6 @@ const homeworkContainer = document.querySelector('#homework-container');
  */
 import { loadAndSortTowns as loadTowns } from './index';
 
-// function loadTowns() {
-//     return new Promise((resolve, reject) => {
-//         let xhr = new XMLHttpRequest();
-
-//         xhr.onreadystatechange = function() {
-//             if (xhr.readyState === 4) {
-//                 if (xhr.status === 200) {
-//                     let townsArray = JSON.parse(xhr.responseText);
-
-//                     townsArray.sort((a, b) => {
-//                         if (a.name > b.name) {
-//                             return 1;
-//                         }
-
-//                         return -1;
-//                     });
-
-//                     resolve(townsArray);
-//                 } else {
-//                     reject('Не удалось загрузить города');
-//                 }
-//             }
-//         };
-
-//         xhr.open(
-//             'GET',
-//             'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json',
-//             true
-//         );
-
-//         xhr.send();
-//     });
-// }
-
 /*
  Функция должна проверять встречается ли подстрока chunk в строке full
  Проверка должна происходить без учета регистра символов
@@ -109,8 +75,8 @@ errorButton.style.display = 'none';
 
 errorButton.textContent = 'Повторить';
 
-filterBlock.appendChild(errorMessage);
-filterBlock.appendChild(errorButton);
+homeworkContainer.appendChild(errorMessage);
+homeworkContainer.appendChild(errorButton);
 
 loadTowns().then(() => {
     loadingBlock.style.display = 'none';
@@ -141,10 +107,14 @@ loadTowns().then(
         });
     },
     error => {
+        console.log(error);
+        loadingBlock.style.display = 'none';
+
         errorMessage.textContent = error;
-        filterInput.style.display = 'none';
+        filterBlock.style.display = 'none';
         errorMessage.style.display = 'block';
         errorButton.style.display = 'block';
+
         errorButton.addEventListener('click', e => {
             e.preventDefault();
             loadTowns();
