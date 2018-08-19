@@ -43,51 +43,6 @@ const addButton = homeworkContainer.querySelector('#add-button');
 // таблица со списком cookie
 const listTable = homeworkContainer.querySelector('#list-table tbody');
 
-function isMatching(full, chunk) {
-    full = full.toLowerCase();
-    chunk = chunk.toLowerCase();
-    if (~full.indexOf(chunk)) {
-        return true;
-    }
-
-    return false;
-}
-
-filterNameInput.addEventListener('keyup', function() {
-    // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
-    let subStr = filterNameInput.value;
-
-    if (!subStr) {
-        buildTable(getCookie());
-    } else {
-        let filteredCookie = {};
-
-        for (let key in getCookie()) {
-            if (key) {
-                if (isMatching(key, subStr)) {
-                    filteredCookie[key] = getCookie()[key];
-                }
-            }
-        }
-        buildTable(filteredCookie);
-    }
-});
-
-addButton.addEventListener('click', () => {
-    // здесь можно обработать нажатие на кнопку "добавить cookie"
-    const cookieName = addNameInput.value;
-    const cookieValue = addValueInput.value;
-
-    setCookie(cookieName, cookieValue, {
-        expires: 36000
-    });
-
-    addNameInput.value = '';
-    addValueInput.value = '';
-
-    buildTable(getCookie());
-});
-
 function getCookie() {
     let cookies = document.cookie.split('; ').reduce((prev, cur) => {
         const [name, value] = cur.split('=');
@@ -165,5 +120,50 @@ function buildTable(cookies = {}) {
         }
     }
 }
+
+function isMatching(full, chunk) {
+    full = full.toLowerCase();
+    chunk = chunk.toLowerCase();
+    if (~full.indexOf(chunk)) {
+        return true;
+    }
+
+    return false;
+}
+
+filterNameInput.addEventListener('keyup', function() {
+    // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
+    let subStr = filterNameInput.value;
+
+    if (!subStr) {
+        buildTable(getCookie());
+    } else {
+        let filteredCookie = {};
+
+        for (let key in getCookie()) {
+            if (key) {
+                if (isMatching(key, subStr)) {
+                    filteredCookie[key] = getCookie()[key];
+                }
+            }
+        }
+        buildTable(filteredCookie);
+    }
+});
+
+addButton.addEventListener('click', () => {
+    // здесь можно обработать нажатие на кнопку "добавить cookie"
+    const cookieName = addNameInput.value;
+    const cookieValue = addValueInput.value;
+
+    setCookie(cookieName, cookieValue, {
+        expires: 36000
+    });
+
+    addNameInput.value = '';
+    addValueInput.value = '';
+
+    buildTable(getCookie());
+});
 
 window.onload = buildTable(getCookie());
