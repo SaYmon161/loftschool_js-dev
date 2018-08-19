@@ -44,46 +44,15 @@ const addButton = homeworkContainer.querySelector('#add-button');
 const listTable = homeworkContainer.querySelector('#list-table tbody');
 
 function getCookie() {
-    let cookies = document.cookie.split('; ').reduce((prev, cur) => {
-        const [name, value] = cur.split('=');
+    return document.cookie
+        .split('; ')
+        .filter(Boolean)
+        .map(cookie => cookie.match(/^([^=]+)=(.+)/))
+        .reduce((obj, [, name, value]) => {
+            obj[name] = value;
 
-        prev[name] = value;
-
-        return prev;
-    }, {});
-
-    return cookies;
-}
-
-function setCookie(name, value, options = {}) {
-    let expires = options.expires;
-
-    if (typeof expires === 'number' && expires) {
-        let d = new Date();
-
-        d.setTime(d.getTime() + expires * 1000);
-        expires = options.expires = d;
-    }
-    if (expires && expires.toUTCString) {
-        options.expires = expires.toUTCString();
-    }
-
-    value = encodeURIComponent(value);
-
-    let updatedCookie = name + '=' + value;
-
-    for (let propName in options) {
-        if (propName) {
-            updatedCookie += '; ' + propName;
-            let propValue = options[propName];
-
-            if (propValue !== true) {
-                updatedCookie += '=' + propValue;
-            }
-        }
-    }
-
-    document.cookie = updatedCookie;
+            return obj;
+        }, {});
 }
 
 function buildTable(cookies = {}) {
@@ -106,14 +75,17 @@ function buildTable(cookies = {}) {
             tableCellButton.appendChild(deleteButton);
             tableRow.appendChild(tableCellButton);
 
-            listTable.appendChild(tableRow);
+            if (
+                isMatching(key, filterNameInput.value) ||
+        isMatching(cookies[key], filterNameInput.value)
+            ) {
+                listTable.appendChild(tableRow);
+            }
 
             deleteButton.addEventListener('click', e => {
                 e.preventDefault();
 
-                setCookie(key, '', {
-                    expires: -1
-                });
+                document.cookie = `${key}=''; expires=${new Date(0)}`;
 
                 tableRow.remove();
             });
@@ -142,7 +114,7 @@ filterNameInput.addEventListener('keyup', function() {
 
         for (let key in getCookie()) {
             if (key) {
-                if (isMatching(key, subStr)) {
+                if (isMatching(key, subStr) || isMatching(getCookie()[key], subStr)) {
                     filteredCookie[key] = getCookie()[key];
                 }
             }
@@ -156,12 +128,7 @@ addButton.addEventListener('click', () => {
     const cookieName = addNameInput.value;
     const cookieValue = addValueInput.value;
 
-    setCookie(cookieName, cookieValue, {
-        expires: 36000
-    });
-
-    addNameInput.value = '';
-    addValueInput.value = '';
+    document.cookie = `${cookieName}=${cookieValue}`;
 
     buildTable(getCookie());
 });
