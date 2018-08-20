@@ -36,10 +36,10 @@ module.exports = {
         }),
         new ExtractTextPlugin('styles.css'),
         new HtmlPlugin({
-            title: 'Cookies',
-            template: 'cookie.hbs',
-            filename: 'cookie.html',
-            chunks: ['cookie']
+            title: 'Другофильтр',
+            template: 'friendsfilter.hbs',
+            filename: 'friendsfilter.html',
+            chunks: ['friendsfilter']
         }),
         new CleanWebpackPlugin(['dist'])
     ]
