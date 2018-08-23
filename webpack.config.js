@@ -15,10 +15,10 @@ rules.push({
 
 module.exports = {
     entry: {
-        cookie: './src/cookie.js'
+        cookie: './src/friendsfilter.js'
     },
     devServer: {
-        index: 'cookie.html'
+        index: 'friendsfilter.html'
     },
     output: {
         filename: '[name].[hash].js',
@@ -38,8 +38,7 @@ module.exports = {
         new HtmlPlugin({
             title: 'Другофильтр',
             template: 'friendsfilter.hbs',
-            filename: 'friendsfilter.html',
-            chunks: ['friendsfilter']
+            filename: 'friendsfilter.html'
         }),
         new CleanWebpackPlugin(['dist'])
     ]
