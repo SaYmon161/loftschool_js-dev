@@ -58,12 +58,14 @@ let leftSide = {
         }
     },
     moveFriend: function(friend) {
+        const friendId = friend.dataset.id;
+
         friend.classList.add('right');
         friend.remove();
         rightSide.rightSideElement.appendChild(friend);
 
         this.friendsArray.forEach((item, i) => {
-            if (item.id === friend.dataset.friendId) {
+            if (item.id === friendId) {
                 const movedFriend = this.friendsArray.splice(i, 1);
 
                 rightSide.friendsArray.push(movedFriend);
@@ -216,9 +218,8 @@ mainContent.addEventListener('click', e => {
 });
 
 saveButton.addEventListener('click', () => {
+    console.log(leftSide.friendsArray);
+
     leftSide.saveToStorage();
-    storage.friendsRightList = JSON.stringify({
-        bla: 'bla',
-        kva: 'kva'
-    });
+    rightSide.saveToStorage();
 });
