@@ -49,7 +49,7 @@ let leftSide = {
                 if (
                     this.isMatching(item.first_name, subStr) ||
           this.isMatching(item.last_name, subStr) ||
-          this.isMatching(item.first_name + item.last_name, subStr)
+          this.isMatching(`${item.first_name} ${item.last_name}`, subStr)
                 ) {
                     filteredFriends.push(item);
                 }
@@ -65,10 +65,10 @@ let leftSide = {
         rightSide.rightSideElement.appendChild(friend);
 
         this.friendsArray.forEach((item, i) => {
-            if (item.id === friendId) {
+            if (item.id === parseInt(friendId)) {
                 const movedFriend = this.friendsArray.splice(i, 1);
-
-                rightSide.friendsArray.push(movedFriend);
+                
+                rightSide.friendsArray = [...rightSide.friendsArray, ...movedFriend];
             }
         });
     }
@@ -117,7 +117,7 @@ let rightSide = {
                 if (
                     this.isMatching(item.first_name, subStr) ||
           this.isMatching(item.last_name, subStr) ||
-          this.isMatching(item.first_name + item.last_name, subStr)
+          this.isMatching(`${item.first_name} ${item.last_name}`, subStr)
                 ) {
                     filteredFriends.push(item);
                 }
@@ -126,15 +126,17 @@ let rightSide = {
         }
     },
     moveFriend: function(friend) {
+        const friendId = friend.dataset.id;
+
         friend.classList.remove('right');
         friend.remove();
-        leftSide.leftSideElement.appendChild(friend);
+        leftSide.rightSideElement.appendChild(friend);
 
         this.friendsArray.forEach((item, i) => {
-            if (item.id === friend.dataset.friendId) {
+            if (item.id === parseInt(friendId)) {
                 const movedFriend = this.friendsArray.splice(i, 1);
-
-                leftSide.friendsArray.push(movedFriend);
+                
+                leftSide.friendsArray = [...leftSide.friendsArray, ...movedFriend];
             }
         });
     }
