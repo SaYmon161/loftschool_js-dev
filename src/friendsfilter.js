@@ -2,6 +2,10 @@ let storage = localStorage;
 
 const filter = document.querySelector('.filter');
 
+const mainContent = document.querySelector('.maincontent');
+
+const saveButton = document.querySelector('.footer__save-button');
+
 let leftSide = {
     friendsArray: [],
     leftSideElement: document.querySelector('#friends-left'),
@@ -52,6 +56,19 @@ let leftSide = {
             });
             this.renderTemplate(filteredFriends);
         }
+    },
+    moveFriend: function(friend) {
+        friend.classList.add('right');
+        friend.remove();
+        rightSide.rightSideElement.appendChild(friend);
+
+        this.friendsArray.forEach((item, i) => {
+            if (item.id === friend.dataset.friendId) {
+                const movedFriend = this.friendsArray.splice(i, 1);
+
+                rightSide.friendsArray.push(movedFriend);
+            }
+        });
     }
 };
 
@@ -105,6 +122,19 @@ let rightSide = {
             });
             this.renderTemplate(filteredFriends);
         }
+    },
+    moveFriend: function(friend) {
+        friend.classList.remove('right');
+        friend.remove();
+        leftSide.leftSideElement.appendChild(friend);
+
+        this.friendsArray.forEach((item, i) => {
+            if (item.id === friend.dataset.friendId) {
+                const movedFriend = this.friendsArray.splice(i, 1);
+
+                leftSide.friendsArray.push(movedFriend);
+            }
+        });
     }
 };
 
@@ -167,4 +197,28 @@ filter.addEventListener('keyup', e => {
     } else if (target.matches('#filter-right')) {
         rightSide.friendsFilter(target);
     }
+});
+
+mainContent.addEventListener('click', e => {
+    const target = e.target;
+
+    if (target.matches('.friend__plus')) {
+        const friend = target.closest('.friend');
+
+        if (friend.classList.contains('right')) {
+            rightSide.moveFriend(friend);
+        } else {
+            leftSide.moveFriend(friend);
+        }
+    }
+    leftSide.friendsArray;
+    rightSide.friendsArray;
+});
+
+saveButton.addEventListener('click', () => {
+    leftSide.saveToStorage();
+    storage.friendsRightList = JSON.stringify({
+        bla: 'bla',
+        kva: 'kva'
+    });
 });
