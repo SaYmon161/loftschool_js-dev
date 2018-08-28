@@ -8,6 +8,7 @@ const saveButton = document.querySelector('.footer__save-button');
 
 let leftSide = {
     friendsArray: [],
+    oppositeSide: rightSide,
     leftSideElement: document.querySelector('#friends-left'),
     readFromStorage: function() {
         this.friendsArray = JSON.parse(storage.friendsLeftList || '[]');
@@ -57,18 +58,70 @@ let leftSide = {
             this.renderTemplate(filteredFriends);
         }
     },
-    moveFriend: function(friend) {
-        const friendId = friend.dataset.id;
+    dragFriend: function(id, moveTo) {
+        const friends = this.leftSideElement.querySelectorAll('.friend');
+        const rightFriends = rightSide.rightSideElement.querySelectorAll('.friend');
 
-        friend.classList.add('right');
-        friend.remove();
-        rightSide.rightSideElement.appendChild(friend);
+        for (let friend of friends) {
+            if (friend.dataset.id == id) {
+                friend.classList.toggle('right');
+
+                for (let rightFriend of rightFriends) {
+                    if (rightFriend.dataset.id == moveTo) {
+                        rightSide.rightSideElement.insertBefore(friend, rightFriend);
+                    } else if (!moveTo) {
+                        rightSide.rightSideElement.appendChild(friend);
+                    }
+                }
+            }
+        }
 
         this.friendsArray.forEach((item, i) => {
-            if (item.id === parseInt(friendId)) {
+            if (item.id == id) {
                 const movedFriend = this.friendsArray.splice(i, 1);
-                
-                rightSide.friendsArray = [...rightSide.friendsArray, ...movedFriend];
+
+                if (!moveTo) {
+                    moveTo = rightSide.friendsArray.length;
+                } else {
+                    rightSide.friendsArray.forEach((item, i) => {
+                        if (item.id === moveTo) {
+                            moveTo = i;
+                        }
+                    });
+                }
+                rightSide.friendsArray.splice(moveTo, 0, movedFriend[0]);
+            }
+        });
+    },
+    sortFriend(id, moveTo) {
+        const friends = this.leftSideElement.querySelectorAll('.friend');
+
+        for (let friend of friends) {
+            if (friend.dataset.id == id) {
+                for (let moveToFriend of friends) {
+                    if (moveToFriend.dataset.id == moveTo) {
+                        this.leftSideElement.insertBefore(friend, moveToFriend);
+                    } else if (!moveTo) {
+                        this.leftSideElement.appendChild(friend);
+                    }
+                }
+            }
+        }
+
+        this.friendsArray.forEach((item, i) => {
+            if (item.id == id) {
+                const movedFriend = this.friendsArray.splice(i, 1);
+
+                if (!moveTo) {
+                    moveTo = this.friendsArray.length;
+                } else {
+                    this.friendsArray.forEach((item, i) => {
+                        if (item.id === moveTo) {
+                            moveTo = i;
+                        }
+                    });
+                }
+                this.friendsArray.splice(moveTo, 0, movedFriend[0]);
             }
         });
     }
@@ -95,6 +148,12 @@ let rightSide = {
         this.rightSideElement.innerHTML = template({
             items: list
         });
+
+        const friends = this.rightSideElement.querySelectorAll('.friend');
+
+        for (let item of friends) {
+            item.classList.add('right');
+        }
     },
     isMatching: function(full, chunk) {
         full = full.toLowerCase();
@@ -125,18 +184,70 @@ let rightSide = {
             this.renderTemplate(filteredFriends);
         }
     },
-    moveFriend: function(friend) {
-        const friendId = friend.dataset.id;
+    dragFriend: function(id, moveTo) {
+        const friends = this.rightSideElement.querySelectorAll('.friend');
+        const leftFriends = leftSide.leftSideElement.querySelectorAll('.friend');
 
-        friend.classList.remove('right');
-        friend.remove();
-        leftSide.rightSideElement.appendChild(friend);
+        for (let friend of friends) {
+            if (friend.dataset.id == id) {
+                friend.classList.toggle('right');
+
+                for (let leftFriend of leftFriends) {
+                    if (leftFriend.dataset.id == moveTo) {
+                        leftSide.leftSideElement.insertBefore(friend, leftFriend);
+                    } else if (!moveTo) {
+                        leftSide.leftSideElement.appendChild(friend);
+                    }
+                }
+            }
+        }
 
         this.friendsArray.forEach((item, i) => {
-            if (item.id === parseInt(friendId)) {
+            if (item.id == id) {
                 const movedFriend = this.friendsArray.splice(i, 1);
-                
-                leftSide.friendsArray = [...leftSide.friendsArray, ...movedFriend];
+
+                if (!moveTo) {
+                    moveTo = leftSide.friendsArray.length;
+                } else {
+                    leftSide.friendsArray.forEach((item, i) => {
+                        if (item.id === moveTo) {
+                            moveTo = i;
+                        }
+                    });
+                }
+                leftSide.friendsArray.splice(moveTo, 0, movedFriend[0]);
+            }
+        });
+    },
+    sortFriend(id, moveTo) {
+        const friends = this.rightSideElement.querySelectorAll('.friend');
+
+        for (let friend of friends) {
+            if (friend.dataset.id == id) {
+                for (let moveToFriend of friends) {
+                    if (moveToFriend.dataset.id == moveTo) {
+                        this.rightSideElement.insertBefore(friend, moveToFriend);
+                    } else if (!moveTo) {
+                        this.rightSideElement.appendChild(friend);
+                    }
+                }
+            }
+        }
+
+        this.friendsArray.forEach((item, i) => {
+            if (item.id == id) {
+                const movedFriend = this.friendsArray.splice(i, 1);
+
+                if (!moveTo) {
+                    moveTo = this.friendsArray.length;
+                } else {
+                    this.friendsArray.forEach((item, i) => {
+                        if (item.id === moveTo) {
+                            moveTo = i;
+                        }
+                    });
+                }
+                this.friendsArray.splice(moveTo, 0, movedFriend[0]);
             }
         });
     }
@@ -210,9 +321,9 @@ mainContent.addEventListener('click', e => {
         const friend = target.closest('.friend');
 
         if (friend.classList.contains('right')) {
-            rightSide.moveFriend(friend);
+            rightSide.dragFriend(friend.dataset.id);
         } else {
-            leftSide.moveFriend(friend);
+            leftSide.dragFriend(friend.dataset.id);
         }
     }
     leftSide.friendsArray;
@@ -220,8 +331,88 @@ mainContent.addEventListener('click', e => {
 });
 
 saveButton.addEventListener('click', () => {
-    console.log(leftSide.friendsArray);
-
     leftSide.saveToStorage();
     rightSide.saveToStorage();
+});
+
+mainContent.addEventListener('dragstart', e => {
+    if (!e.target.matches('.friend')) {
+        e.preventDefault;
+    } else {
+        e.dataTransfer.setData('id', e.target.dataset.id);
+        e.dataTransfer.setData('startSide', e.target.closest('.friends').id);
+    }
+});
+
+mainContent.addEventListener('dragover', e => {
+    e.preventDefault();
+});
+
+mainContent.addEventListener('dragenter', e => {
+    let friends = e.target.closest('.friends');
+
+    if (!e.target.matches('.friend')) {
+        return;
+    }
+
+    let placeholder = document.createElement('div');
+    let placeholders = document.querySelectorAll('.placeholder');
+
+    Array.from(placeholders).forEach(placeholder => {
+        placeholder.remove();
+    });
+
+    placeholder.classList.add('placeholder');
+
+    let friend = e.target.closest('.friend');
+
+    if (e.offsetY <= friend.offsetHeight / 2) {
+        friend.parentElement.insertBefore(placeholder, friend);
+    } else {
+        if (friend.nextElementSibling) {
+            friend.parentElement.insertBefore(placeholder, friend.nextElementSibling);
+        } else {
+            friends.appendChild(placeholder);
+        }
+    }
+});
+
+mainContent.addEventListener('drop', e => {
+    const id = e.dataTransfer.getData('id');
+    const placeholder = document.querySelector('.placeholder');
+    let placeholders = document.querySelectorAll('.placeholder');
+    let moveToId;
+    const startSide = e.dataTransfer.getData('startSide');
+
+    if (placeholder.nextElementSibling) {
+        moveToId = parseInt(placeholder.nextElementSibling.dataset.id);
+    } else {
+        moveToId = parseInt(placeholder.previousElementSibling.dataset.id);
+    }
+
+    if (e.target.closest('.maincontent__right')) {
+        if (e.target.closest(`#${startSide}`)) {
+            rightSide.sortFriend(id, moveToId);
+        } else {
+            leftSide.dragFriend(id, moveToId);
+        }
+    } else if (e.target.closest('.maincontent__left')) {
+        if (e.target.closest(`#${startSide}`)) {
+            leftSide.sortFriend(id, moveToId);
+        } else {
+            rightSide.dragFriend(id, moveToId);
+        }
+    }
+
+    Array.from(placeholders).forEach(placeholder => {
+        placeholder.remove();
+    });
+});
+
+document.addEventListener('dragend', () => {
+    let placeholders = document.querySelectorAll('.placeholder');
+
+    Array.from(placeholders).forEach(placeholder => {
+        placeholder.remove();
+    });
 });

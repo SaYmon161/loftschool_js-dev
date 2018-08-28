@@ -283,6 +283,12 @@
   .footer__save-button:active {
     background-color: #e06a49;
   }
+
+  .placeholder {
+    height: 60px;
+    width: 100%;
+    background-image: repeating-linear-gradient(45deg, #fff, #fff 10px, #c4c4c4 10px, #c4c4c4 20px)
+  }
 </style>
 
 <div class="wrapper">
@@ -325,7 +331,8 @@
         </div>
         <div class="maincontent__right">
           <h3 class="title">Друзья в списке</h3>
-          <div id="friends-right" class="friends"></div>
+          <div id="friends-right" class="friends">
+          </div>
         </div>
       </div>
     </div>
