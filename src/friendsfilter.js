@@ -14,10 +14,10 @@ let leftSide = {
     friendsArray: [],
     sideElement: document.querySelector('#friends-left'),
     readFromStorage: function() {
-        this.friendsArray = JSON.parse(storage[`${this}`] || '[]');
+        this.friendsArray = JSON.parse(storage.leftSide || '[]');
     },
     saveToStorage: function() {
-        storage[this] = JSON.stringify(this.friendsArray);
+        storage.leftSide = JSON.stringify(this.friendsArray);
     },
     getFriendsLists: function() {
         return this.friendsArray;
@@ -134,10 +134,10 @@ let rightSide = {
     friendsArray: [],
     sideElement: document.querySelector('#friends-right'),
     readFromStorage: function() {
-        this.friendsArray = JSON.parse(storage[`${this}`] || '[]');
+        this.friendsArray = JSON.parse(storage.rightSide || '[]');
     },
     saveToStorage: function() {
-        storage[this] = JSON.stringify(this.friendsArray);
+        storage.rightSide = JSON.stringify(this.friendsArray);
     },
     getFriendsLists: function() {
         return this.friendsArray;
@@ -390,8 +390,6 @@ mainContent.addEventListener('drop', e => {
     let placeholders = document.querySelectorAll('.placeholder');
     let moveToId;
     const startSide = e.dataTransfer.getData('startSide');
-
-    console.log(placeholder.nextElementSibling);
 
     if (placeholder.nextElementSibling) {
         moveToId = parseInt(placeholder.nextElementSibling.dataset.id);
