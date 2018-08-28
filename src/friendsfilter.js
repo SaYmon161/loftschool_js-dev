@@ -1,3 +1,7 @@
+import './styles/style.css';
+
+import template from './templates/friends.hbs';
+
 let storage = localStorage;
 
 const filter = document.querySelector('.filter');
@@ -8,13 +12,12 @@ const saveButton = document.querySelector('.footer__save-button');
 
 let leftSide = {
     friendsArray: [],
-    oppositeSide: rightSide,
-    leftSideElement: document.querySelector('#friends-left'),
+    sideElement: document.querySelector('#friends-left'),
     readFromStorage: function() {
-        this.friendsArray = JSON.parse(storage.friendsLeftList || '[]');
+        this.friendsArray = JSON.parse(storage[`${this}`] || '[]');
     },
     saveToStorage: function() {
-        storage.friendsLeftList = JSON.stringify(this.friendsArray);
+        storage[this] = JSON.stringify(this.friendsArray);
     },
     getFriendsLists: function() {
         return this.friendsArray;
@@ -23,9 +26,7 @@ let leftSide = {
         this.friendsArray = array.slice();
     },
     renderTemplate: function(list = this.friendsArray) {
-        const template = require('../friends.hbs');
-
-        this.leftSideElement.innerHTML = template({
+        this.sideElement.innerHTML = template({
             items: list
         });
     },
@@ -59,18 +60,20 @@ let leftSide = {
         }
     },
     dragFriend: function(id, moveTo) {
-        const friends = this.leftSideElement.querySelectorAll('.friend');
-        const rightFriends = rightSide.rightSideElement.querySelectorAll('.friend');
+        const friends = this.sideElement.querySelectorAll('.friend');
+        const leftFriends = rightSide.sideElement.querySelectorAll('.friend');
 
         for (let friend of friends) {
             if (friend.dataset.id == id) {
                 friend.classList.toggle('right');
 
-                for (let rightFriend of rightFriends) {
-                    if (rightFriend.dataset.id == moveTo) {
-                        rightSide.rightSideElement.insertBefore(friend, rightFriend);
-                    } else if (!moveTo) {
-                        rightSide.rightSideElement.appendChild(friend);
+                if (leftFriends.length === 0 || !moveTo) {
+                    rightSide.sideElement.appendChild(friend);
+                } else {
+                    for (let leftFriend of leftFriends) {
+                        if (leftFriend.dataset.id == moveTo) {
+                            rightSide.sideElement.insertBefore(friend, leftFriend);
+                        }
                     }
                 }
             }
@@ -94,15 +97,15 @@ let leftSide = {
         });
     },
     sortFriend(id, moveTo) {
-        const friends = this.leftSideElement.querySelectorAll('.friend');
+        const friends = this.sideElement.querySelectorAll('.friend');
 
         for (let friend of friends) {
             if (friend.dataset.id == id) {
                 for (let moveToFriend of friends) {
                     if (moveToFriend.dataset.id == moveTo) {
-                        this.leftSideElement.insertBefore(friend, moveToFriend);
+                        this.sideElement.insertBefore(friend, moveToFriend);
                     } else if (!moveTo) {
-                        this.leftSideElement.appendChild(friend);
+                        this.sideElement.appendChild(friend);
                     }
                 }
             }
@@ -129,12 +132,12 @@ let leftSide = {
 
 let rightSide = {
     friendsArray: [],
-    rightSideElement: document.querySelector('#friends-right'),
+    sideElement: document.querySelector('#friends-right'),
     readFromStorage: function() {
-        this.friendsArray = JSON.parse(storage.friendsRightList || '[]');
+        this.friendsArray = JSON.parse(storage[`${this}`] || '[]');
     },
     saveToStorage: function() {
-        storage.friendsRightList = JSON.stringify(this.friendsArray);
+        storage[this] = JSON.stringify(this.friendsArray);
     },
     getFriendsLists: function() {
         return this.friendsArray;
@@ -143,13 +146,11 @@ let rightSide = {
         this.friendsArray = array.slice();
     },
     renderTemplate: function(list = this.friendsArray) {
-        const template = require('../friends.hbs');
-
-        this.rightSideElement.innerHTML = template({
+        this.sideElement.innerHTML = template({
             items: list
         });
 
-        const friends = this.rightSideElement.querySelectorAll('.friend');
+        const friends = this.sideElement.querySelectorAll('.friend');
 
         for (let item of friends) {
             item.classList.add('right');
@@ -185,18 +186,20 @@ let rightSide = {
         }
     },
     dragFriend: function(id, moveTo) {
-        const friends = this.rightSideElement.querySelectorAll('.friend');
-        const leftFriends = leftSide.leftSideElement.querySelectorAll('.friend');
+        const friends = this.sideElement.querySelectorAll('.friend');
+        const leftFriends = leftSide.sideElement.querySelectorAll('.friend');
 
         for (let friend of friends) {
             if (friend.dataset.id == id) {
                 friend.classList.toggle('right');
 
-                for (let leftFriend of leftFriends) {
-                    if (leftFriend.dataset.id == moveTo) {
-                        leftSide.leftSideElement.insertBefore(friend, leftFriend);
-                    } else if (!moveTo) {
-                        leftSide.leftSideElement.appendChild(friend);
+                if (leftFriends.length === 0 || !moveTo) {
+                    leftSide.sideElement.appendChild(friend);
+                } else {
+                    for (let leftFriend of leftFriends) {
+                        if (leftFriend.dataset.id == moveTo) {
+                            leftSide.sideElement.insertBefore(friend, leftFriend);
+                        }
                     }
                 }
             }
@@ -220,15 +223,15 @@ let rightSide = {
         });
     },
     sortFriend(id, moveTo) {
-        const friends = this.rightSideElement.querySelectorAll('.friend');
+        const friends = this.sideElement.querySelectorAll('.friend');
 
         for (let friend of friends) {
             if (friend.dataset.id == id) {
                 for (let moveToFriend of friends) {
                     if (moveToFriend.dataset.id == moveTo) {
-                        this.rightSideElement.insertBefore(friend, moveToFriend);
+                        this.sideElement.insertBefore(friend, moveToFriend);
                     } else if (!moveTo) {
-                        this.rightSideElement.appendChild(friend);
+                        this.sideElement.appendChild(friend);
                     }
                 }
             }
@@ -350,30 +353,34 @@ mainContent.addEventListener('dragover', e => {
 
 mainContent.addEventListener('dragenter', e => {
     let friends = e.target.closest('.friends');
-
-    if (!e.target.matches('.friend')) {
-        return;
-    }
-
     let placeholder = document.createElement('div');
     let placeholders = document.querySelectorAll('.placeholder');
 
-    Array.from(placeholders).forEach(placeholder => {
-        placeholder.remove();
-    });
+    if (!e.target.matches('.placeholder')) {
+        Array.from(placeholders).forEach(placeholder => {
+            placeholder.remove();
+        });
+    }
 
     placeholder.classList.add('placeholder');
 
     let friend = e.target.closest('.friend');
 
-    if (e.offsetY <= friend.offsetHeight / 2) {
-        friend.parentElement.insertBefore(placeholder, friend);
-    } else {
-        if (friend.nextElementSibling) {
-            friend.parentElement.insertBefore(placeholder, friend.nextElementSibling);
+    if (e.target.matches('.friend')) {
+        if (e.offsetY <= friend.offsetHeight / 2) {
+            friend.parentElement.insertBefore(placeholder, friend);
         } else {
-            friends.appendChild(placeholder);
+            if (friend.nextElementSibling) {
+                friend.parentElement.insertBefore(
+                    placeholder,
+                    friend.nextElementSibling
+                );
+            } else if (!friend.nextElementSibling || friends.children.length === 0) {
+                friends.appendChild(placeholder);
+            }
         }
+    } else if (e.target.matches('.friends')) {
+        friends.appendChild(placeholder);
     }
 });
 
@@ -384,10 +391,12 @@ mainContent.addEventListener('drop', e => {
     let moveToId;
     const startSide = e.dataTransfer.getData('startSide');
 
+    console.log(placeholder.nextElementSibling);
+
     if (placeholder.nextElementSibling) {
         moveToId = parseInt(placeholder.nextElementSibling.dataset.id);
     } else {
-        moveToId = parseInt(placeholder.previousElementSibling.dataset.id);
+        moveToId = null;
     }
 
     if (e.target.closest('.maincontent__right')) {

@@ -15,7 +15,7 @@ rules.push({
 
 module.exports = {
     entry: {
-        cookie: './src/friendsfilter.js'
+        friendsfilter: './src/friendsfilter.js'
     },
     devServer: {
         index: 'friendsfilter.html'
