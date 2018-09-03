@@ -17,14 +17,12 @@ const saveButton = document.querySelector('.footer__save-button');
 let leftSide = {
     friendsArray: [],
     sideElement: document.querySelector('#friends-left'),
-    storage: localStorage.leftSide,
     filter: document.querySelector('#filter-right')
 };
 
 let rightSide = {
     friendsArray: [],
     sideElement: document.querySelector('#friends-right'),
-    storage: localStorage.rightSide,
     filter: document.querySelector('#filter-left')
 };
 

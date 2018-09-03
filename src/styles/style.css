@@ -302,3 +302,6 @@ html {
     #c4c4c4 20px
   );
 }
+.hidden {
+  display: none;
+}
