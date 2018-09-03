@@ -14,7 +14,12 @@ rules.push({
 });
 
 module.exports = {
-    entry: './src/index.js',
+    entry: {
+        friendsfilter: './src/friendsfilter.js'
+    },
+    devServer: {
+        index: 'friendsfilter.html'
+    },
     output: {
         filename: '[name].[hash].js',
         path: path.resolve('dist')
@@ -31,8 +36,9 @@ module.exports = {
         }),
         new ExtractTextPlugin('styles.css'),
         new HtmlPlugin({
-            title: 'Loft School sample project',
-            template: 'index.hbs'
+            title: 'Другофильтр',
+            template: 'friendsfilter.hbs',
+            filename: 'friendsfilter.html'
         }),
         new CleanWebpackPlugin(['dist'])
     ]
