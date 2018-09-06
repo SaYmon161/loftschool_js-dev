@@ -15,10 +15,10 @@ rules.push({
 
 module.exports = {
     entry: {
-        friendsfilter: './src/friendsfilter.js'
+        friendsfilter: './src/index.js'
     },
     devServer: {
-        index: 'friendsfilter.html'
+        index: 'index.html'
     },
     output: {
         filename: '[name].[hash].js',
@@ -36,9 +36,9 @@ module.exports = {
         }),
         new ExtractTextPlugin('styles.css'),
         new HtmlPlugin({
-            title: 'Другофильтр',
-            template: 'friendsfilter.hbs',
-            filename: 'friendsfilter.html'
+            title: 'Геоотзыв',
+            template: 'index.hbs',
+            filename: 'index.html'
         }),
         new CleanWebpackPlugin(['dist'])
     ]
