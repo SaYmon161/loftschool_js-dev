@@ -1,39 +1,22 @@
-<div class="baloon">
-  <div class="baloon__header">
-    Невский пр., 78, Санкт-Петербург, 191025
+<div class="baloon__header">
+  <div class="baloon__address">
+    <img src="../images/marker.png" alt="" class="baloon__address-marker">
+    <span class="baloon__address-text">{{address}}</span>
   </div>
-  <div class="feedback">
+  <div class="close"></div>
+</div>
+<div class="feedback">
+  <div class="feedback__scroll">
     <ul class="feedback__list">
-      <li class="feedback__item">
-        <div class="feedback__info">
-          <span class="feedback__name">svetlana</span>
-          <span class="feedback__place">Шоколадница</span>
-          <span class="feedback__date">13.12.2015</span>
-        </div>
-        <div class="feedback__text">
-          Очень хорошее место!
-        </div>
-      </li>
-      <li class="feedback__item">
-        <div class="feedback__info">
-          <span class="feedback__name">Сергей Мелюков</span>
-          <span class="feedback__place">Красный куб</span>
-          <span class="feedback__date">13.12.2015</span>
-        </div>
-        <div class="feedback__text">
-          Очень хорошее место!
-        </div>
-      </li>
     </ul>
   </div>
-  <br/>
-  <div class="baloon__form">
-    <form action="POST" class="form">
-      <h1 class="form__title">ВАШ ОТЗЫВ</h1>
-      <input type="text" class="form__name" placeholder="Ваше имя">
-      <input type="text" class="form__place" placeholder="Укажите имя">
-      <textarea name="feedback" id="" cols="30" rows="10" class="form__textarea" placeholder="Поделитесь впечатлениями"></textarea>
-      <button class="form__btn">Добавить</button>
-    </form>
-  </div>
+</div>
+<div class="baloon__form">
+  <form action="POST" class="form">
+    <h1 class="form__title">ВАШ ОТЗЫВ</h1>
+    <input name="name" type="text" class="form__name" placeholder="Ваше имя">
+    <input name="place" type="text" class="form__place" placeholder="Укажите место">
+    <textarea name="feedback" id="" cols="30" rows="5" class="form__textarea" placeholder="Поделитесь впечатлениями"></textarea>
+    <button class="form__btn" id="save">Добавить</button>
+  </form>
 </div>
